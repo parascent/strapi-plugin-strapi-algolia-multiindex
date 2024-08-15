@@ -39,59 +39,66 @@ export default ({ strapi }: { strapi: Strapi }) => ({
       return ctx.throw(400, `Missing name in body`);
     }
 
-    const contentType = contentTypes.find(
+    const validContentTypes = contentTypes.filter(
       (contentType) => contentType.name === body.name
     );
 
-    if (!contentType) {
+    if (!validContentTypes) {
       return ctx.throw(
         400,
         `Content type not found in config with ${body.name}`
       );
     }
 
-    const {
-      name,
-      index,
-      idPrefix = '',
-      populate = '*',
-      hideFields = [],
-      transformToBooleanFields = [],
-    } = contentType;
+    var messages : string[]
+    messages = []
+    for( let contentType of validContentTypes ){
 
-    const indexName = `${indexPrefix}${index ?? name}`;
-    const algoliaIndex = client.initIndex(indexName);
+      const {
+        name,
+        index,
+        idPrefix = '',
+        populate = '*',
+        hideFields = [],
+        transformToBooleanFields = [],
+      } = contentType;
 
-    const allLocales =
-      await strapi.plugins?.i18n?.services?.locales?.find();
-    const localeFilter = allLocales?.map(
-      (locale: any) => locale.code
-    );
-    const findManyBaseOptions = { populate };
-    const findManyOptions = localeFilter
-      ? {
+      const indexName = `${indexPrefix}${index ?? name}`;
+      const algoliaIndex = client.initIndex(indexName);
+
+      const allLocales =
+        await strapi.plugins?.i18n?.services?.locales?.find();
+      const localeFilter = allLocales?.map(
+        (locale: any) => locale.code
+      );
+      const findManyBaseOptions = { populate };
+      const findManyOptions = localeFilter
+        ? {
           ...findManyBaseOptions,
           locale: localeFilter,
         }
-      : { ...findManyBaseOptions };
+        : { ...findManyBaseOptions };
 
-    const articlesStrapi = await strapi.entityService?.findMany(
-      name as any,
-      findManyOptions
-    );
-    const articles = (articlesStrapi ?? []).map((article: any) =>
-      utilsService.filterProperties(article, hideFields)
-    );
+      const articlesStrapi = await strapi.entityService?.findMany(
+        name as any,
+        findManyOptions
+      );
+      const articles = (articlesStrapi ?? []).map((article: any) =>
+        utilsService.filterProperties(article, hideFields)
+      );
 
-    await strapiService.afterUpdateAndCreateAlreadyPopulate(
-      articles,
-      idPrefix,
-      algoliaIndex,
-      transformToBooleanFields
-    );
+      await strapiService.afterUpdateAndCreateAlreadyPopulate(
+        articles,
+        idPrefix,
+        algoliaIndex,
+        transformToBooleanFields
+      );
+      messages.push( `Indexing articles type ${body.name} to index ${indexName}`)
+    }
+
 
     return ctx.send({
-      message: `Indexing articles type ${name} to index ${indexName}`,
+      message: messages.join(', ') + '.'
     });
   },
 });
