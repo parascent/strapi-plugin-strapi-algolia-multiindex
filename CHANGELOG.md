@@ -1,5 +1,16 @@
 
 
+## 2.0.0 (2024-08-15)
+
+
+### Features
+
+ - add hideFields property in configuration - add tests - added credentials to gitignore- [admin] - add all needed hooks- [admin] - add component that would be injected in the list view- [admin] - add Index All Button to trigger indexing- [admin] - add Initializer- [admin] - add needed base files- [admin] - add permission to get- [admin] - add plugin id file- [admin] - add translations- [fields] - hide fields configured- [find] - use entityService instead of query to get objects- [index] - transform null to boolean for some fields - init commit with full plugin- [locales] - add locales configuration for the index all endpoint- [locales] - handle locales in the index all controller- [locales] - use locales from plugins and remove from configuration - optimize index all controller- [server] - add endpoint to get configured content types- [server] - add permissions to index all- [service] - add utils service - use strapi query instead of entityService to use locale filter
+
+### Bug Fixes
+
+ - build - call createOrDeleteObjects outside of for - call exists only once - changelog formatting - changelog formatting - changelog formatting- [confirmModal] - use primary color on left modal btn- [custom] - remove custom file to get typings - fix algoliasearch version becaure there is a bug- [indexAll] - fix the content types get - lint - lint- [permission] - add real plugin id- [README] - fix badge - release-it config - remove dry-run from release-it- [transformToBoolean] - handle array - update FR translations - update homepage url link to strapi marketplace - use import algoliasearch not dynamic
+
 ## [1.7.1](https://github.com/wizbii/strapi-algolia/compare/v1.7.0...v1.7.1) (2024-06-21)
 
 ## [1.7.0](https://github.com/wizbii/strapi-algolia/compare/v1.7.0-1...v1.7.0) (2024-04-30)
